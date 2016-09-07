@@ -1,0 +1,15 @@
+{
+  "name": "fwords",
+  "version": "0.0.1",
+  "description": "f-words saves the world!",
+  "main": "index.html",
+  "window": {
+    "width": 400,
+    "height": 400
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Masteryu",
+  "license": "MIT"
+}

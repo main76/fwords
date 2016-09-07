@@ -1,0 +1,53 @@
+{
+    "version": "0.1.0",
+    "command": "nwbuild",
+    "isShellCommand": true,
+    "suppressTaskName": true,
+    "args": [],
+    "tasks": [
+        {
+            "isBuildCommand": true,
+            "taskName": "release win64",
+            "args": [
+                "-p",
+                "win64",
+                ".",
+                "-o",
+                "release"
+            ]
+        },
+        {
+            // "isBuildCommand": true,
+            "taskName": "release win32",
+            "args": [
+                "-p",
+                "win32",
+                ".",
+                "-o",
+                "release"
+            ]
+        },
+        {
+            // "isBuildCommand": true,
+            "taskName": "release osx32",
+            "args": [
+                "-p",
+                "osx32",
+                ".",
+                "-o",
+                "release"
+            ]
+        },
+        {
+            // "isBuildCommand": true,
+            "taskName": "release osx64",
+            "args": [
+                "-p",
+                "osx64",
+                ".",
+                "-o",
+                "release"
+            ]
+        }
+    ]
+}
