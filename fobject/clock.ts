@@ -1,4 +1,5 @@
 /// <reference path="baseobj.ts" />
+
 module fobject {
     export class ClockPainter implements IDrawable {
         private now: Date;

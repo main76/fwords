@@ -1,5 +1,6 @@
 /// <reference path="./loading.ts" />
 /// <reference path="./basescene.ts" />
+
 module scene {
 
     type sceneCollection = {

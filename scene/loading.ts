@@ -1,5 +1,6 @@
 /// <reference path="basescene.ts" />
 /// <reference path="../fobject/clock.ts" />
+
 module scene {
 
     export class Loading extends BaseScene {
