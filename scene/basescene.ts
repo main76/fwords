@@ -1,7 +1,8 @@
 /// <reference path="../fobject/baseobj.ts" />
+
 module scene {
 
-    export abstract class BaseScene {
+    export abstract class BaseScene implements fobject.IFrameType {
         protected context: CanvasRenderingContext2D;
         protected fobjs: Array<fobject.Fobject<fobject.IDrawable>>;
 

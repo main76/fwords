@@ -1,6 +1,7 @@
 module fobject {
 
     export class Fobject<T extends IDrawable> implements IDrawable, IDisposable {
+        
         protected instance: T;
         public Priority: number;
 
@@ -26,8 +27,11 @@ module fobject {
         }
     }
 
-    export interface IDrawable {
+    export interface IDrawable extends IFrameType {
         Draw(context: CanvasRenderingContext2D): void;
+    }
+
+    export interface IFrameType {
         Update(elasped: number): void;
     }
 
