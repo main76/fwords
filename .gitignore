@@ -1,6 +1,9 @@
 # Compiled Javascript file
 export/
 
+# nw.js release folder
+release/
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
