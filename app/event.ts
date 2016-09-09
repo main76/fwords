@@ -11,6 +11,7 @@ module core {
 
     export class Keys implements fobject.IFrameType {
         protected keys: Object;
+        protected listeners: Object;
         public Modifiers: ModifierCollection;
         protected static instance: Keys;
 
@@ -20,26 +21,32 @@ module core {
             return Keys.instance;
         }
 
-        public static CreateInstance(app: Application): void {
+        public static CreateInstance(app: Application): Keys {
             if (!(app instanceof Application))
                 throw new Error('Instance can only be created by the application.');
             if (Keys.instance)
-                throw new Error('Instance has already been Initialized');
+                throw new Error('Instance can only be initialized once');
             Keys.instance = new Keys();
+            return Keys.instance;
         }
 
         constructor() {
             if (!window)
                 throw new Error('Null reference of BOM.window.');
-            window.onkeydown = this.OnKeyDown.bind(this);
-            window.onkeyup = this.OnKeyUp.bind(this);
             this.keys = {};
+            this.listeners = {
+                press: [],
+                release: []
+            };
             this.Modifiers = {
                 Shift: false,
                 Alt: false,
                 Meta: false,
                 Control: false
             };
+
+            window.onkeyup = this.OnKeyUp.bind(this);
+            window.onkeydown = this.OnKeyDown.bind(this);
         }
 
         public Update(): void {
@@ -55,14 +62,34 @@ module core {
             return this.IsKeyPress(type + l) || this.IsKeyPress(type + r);
         }
 
+        private Emit(type: string, key: string): void {
+            let handlers: Function[] = this.listeners[type];
+            if (!handlers)
+                return;
+            handlers.forEach((handler) => {
+                if (handler) handler(key);
+            });
+        }
+
+        public AddListener(type: string, func: Function) {
+            let handlers: Function[] = this.listeners[type];
+            if (!handlers)
+                throw new Error('Type ' + type + ' not supported');
+            handlers[handlers.length] = func;
+        }
+
         protected OnKeyDown(event: KeyboardEvent): void {
             let key = whatKey(event);
-            this.keys[key] = true;
+            if (!this.keys[key]) {
+                this.Emit('press', key);
+                this.keys[key] = true;
+            }
         }
 
         protected OnKeyUp(event: KeyboardEvent): void {
             let key = whatKey(event);
             this.keys[key] = false;
+            this.Emit('release', key);
         }
 
         public IsKeyPress(key: string): boolean {
@@ -106,38 +133,42 @@ module core {
         18: 165
     };
 
-        function whatKey(event: KeyboardEvent): string {
-            let key = keyCodes[event.keyCode];
-            if (key) {
-                if (event.location === Location.NUMPAD) {
-                    let mapped = shiftNumpad[event.keyCode];
-                    if (mapped) {
-                        return keyCodes[mapped];
-                    }
+    function whatKey(event: KeyboardEvent): string {
+        let key = keyCodes[event.keyCode];
+        if (key) {
+            if (event.location === Location.NUMPAD) {
+                let mapped = shiftNumpad[event.keyCode];
+                if (mapped) {
+                    return keyCodes[mapped];
                 }
-                else if (event.location === Location.LEFT && event.keyCode in left) {
-                    key = keyCodes[left[event.keyCode]];
-                }
-                else if (event.location === Location.RIGHT && event.keyCode in right) {
-                    key = keyCodes[right[event.keyCode]];
-                }
-                return key;
             }
-            else return String.fromCharCode(event.keyCode);
+            else if (event.location === Location.LEFT && event.keyCode in left) {
+                key = keyCodes[left[event.keyCode]];
+            }
+            else if (event.location === Location.RIGHT && event.keyCode in right) {
+                key = keyCodes[right[event.keyCode]];
+            }
+            return key;
         }
+        else return String.fromCharCode(event.keyCode);
+    }
 
     // the ultimate list of keycodes from https://github.com/Benvie/Keyboard
     const keyCodes: string[] = [
-        'Unknown', 'Mouse1', 'Mouse2', 'Break', 'Mouse3', 'Mouse4', 'Mouse5', '', 'Backspace', 'Tab', '', '', 'Clear', 'Enter', '', '', 'Shift', 'Control', 'Alt', 'Pause', 'CapsLock', 'IMEHangul', '',
-        'IMEJunja', 'IMEFinal', 'IMEKanji', '', 'Escape', 'IMEConvert', 'IMENonconvert', 'IMEAccept', 'IMEModechange', 'Space', 'PageUp', 'PageDown', 'End', 'Home', 'Left', 'Up', 'Right', 'Down',
-        'Select', 'Print', 'Execute', 'PrintScreen', 'Insert', 'Delete', 'Help', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '', '', '', '', '', '', '', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-        'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'MetaLeft', 'MetaLeft', 'MetaExtra', '', 'Sleep', 'Numpad0', 'Numpad1', 'Numpad2', 'Numpad3',
-        'Numpad4', 'Numpad5', 'Numpad6', 'Numpad7', 'Numpad8', 'Numpad9', 'NumpadMultiply', 'NumpadAdd', 'NumpadEnter', 'NumpadSubtract', 'NumpadDecimal', 'NumpadDivide', 'F1', 'F2', 'F3', 'F4', 'F5',
-        'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12', 'F13', 'F14', 'F15', 'F16', 'F17', 'F18', 'F19', 'F20', 'F21', 'F22', 'F23', 'F24', '', '', '', '', '', '', '', '', 'NumLock', 'ScrollLock', '',
-        '', '', '', '', '', '', '', '', '', '', '', '', '', 'ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight', 'AltLeft', 'AltRight', 'BrowserBack', 'BrowserForward', 'BrowserRefresh',
-        'BrowserStop', 'BrowserSearch', 'BrowserFavorites', 'BrowserHome', 'VolumeMute', 'VolumeDown', 'VolumeUp', 'MediaNextTrack', 'MediaPreventrack', 'MediaStop', 'MediaPlayPause', 'LaunchMail',
-        'SelectMedia', 'LaunchApplication1', 'LaunchApplication2', '', '', ';', '=', ',', '-', '.', '/', 'DeadGrave', 'DeadAcute', 'DeadCircumflex', 'DeadTilde', 'DeadMacron', 'DeadBreve', 'DeadAboveDot',
-        'DeadUmlaut', 'DeadAboveRing', 'DeadDoubleAcute', 'DeadCaron', '', '', '', '', '', '', '', '', '', '', '', '', 'DeadCedilla', 'DeadOgonek', '', '', '[', '\\', ']', '\\', 'Meta', 'Meta', '',
-        'AltGr', '', '', 'IMEProcess', '', '0x00', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'Attention', 'Crsel', 'Exsel', 'EraseEOF', 'Play', 'Zoom', 'NoName', '', 'Clear', ''
+        'Unknown', 'Mouse1', 'Mouse2', 'Break', 'Mouse3', 'Mouse4', 'Mouse5', '', 'Backspace', 'Tab', '', '', 'Clear', 'Enter', '', '', 'Shift', 'Control',
+        'Alt', 'Pause', 'CapsLock', 'IMEHangul', '', 'IMEJunja', 'IMEFinal', 'IMEKanji', '', 'Escape', 'IMEConvert', 'IMENonconvert', 'IMEAccept',
+        'IMEModechange', 'Space', 'PageUp', 'PageDown', 'End', 'Home', 'Left', 'Up', 'Right', 'Down', 'Select', 'Print', 'Execute', 'PrintScreen', 'Insert',
+        'Delete', 'Help', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '', '', '', '', '', '', '', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+        'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'MetaLeft', 'MetaLeft', 'MetaExtra', '', 'Sleep', 'Numpad0',
+        'Numpad1', 'Numpad2', 'Numpad3', 'Numpad4', 'Numpad5', 'Numpad6', 'Numpad7', 'Numpad8', 'Numpad9', 'NumpadMultiply', 'NumpadAdd', 'NumpadEnter',
+        'NumpadSubtract', 'NumpadDecimal', 'NumpadDivide', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12', 'F13', 'F14', 'F15',
+        'F16', 'F17', 'F18', 'F19', 'F20', 'F21', 'F22', 'F23', 'F24', '', '', '', '', '', '', '', '', 'NumLock', 'ScrollLock', '',
+        '', '', '', '', '', '', '', '', '', '', '', '', '', 'ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight', 'AltLeft', 'AltRight', 'BrowserBack',
+        'BrowserForward', 'BrowserRefresh', 'BrowserStop', 'BrowserSearch', 'BrowserFavorites', 'BrowserHome', 'VolumeMute', 'VolumeDown', 'VolumeUp',
+        'MediaNextTrack', 'MediaPreventrack', 'MediaStop', 'MediaPlayPause', 'LaunchMail', 'SelectMedia', 'LaunchApplication1', 'LaunchApplication2', '', '',
+        ';', '=', ',', '-', '.', '/', 'DeadGrave', 'DeadAcute', 'DeadCircumflex', 'DeadTilde', 'DeadMacron', 'DeadBreve', 'DeadAboveDot', 'DeadUmlaut',
+        'DeadAboveRing', 'DeadDoubleAcute', 'DeadCaron', '', '', '', '', '', '', '', '', '', '', '', '', 'DeadCedilla', 'DeadOgonek', '', '', '[', '\\', ']',
+        '\\', 'Meta', 'Meta', '', 'AltGr', '', '', 'IMEProcess', '', '0x00', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'Attention', 'Crsel',
+        'Exsel', 'EraseEOF', 'Play', 'Zoom', 'NoName', '', 'Clear', ''
     ];
 }

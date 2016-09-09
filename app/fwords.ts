@@ -5,25 +5,29 @@ module core {
     export class Application {
         private scene: scene.Manager;
         private startTime: Date;
-        private lastFrame: Date;
+        private lastFrame: any;
+        private keyboard: Keys;
 
         constructor(context: CanvasRenderingContext2D) {
-            this.scene = new scene.Manager(context);
-            Keys.CreateInstance(this);
+            this.keyboard = Keys.CreateInstance(this);
+            this.scene = scene.Manager.CreateInstance(this, context);
         }
 
         public Start(timeout: number): void {
             this.startTime = new Date();
             this.lastFrame = this.startTime;
+            
             var handler = () => {
-                let nowTime = new Date();
+                let nowTime: any = new Date();
                 let current = this.scene.Current;
-                let elasped = nowTime.getMilliseconds() - this.lastFrame.getMilliseconds();
+                let elasped = nowTime - this.lastFrame;
 
+                this.keyboard.Update();
                 current.Update(elasped);
+
                 this.lastFrame = nowTime;
             };
-            setInterval(handler, timeout);
+            setInterval(handler.bind(this), timeout);
         }
     }
 }

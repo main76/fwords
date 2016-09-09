@@ -12,11 +12,18 @@ module scene {
         }
 
         public Update(elasped: number): void {
+            this.ClearCanvas();
             this.fobjs.sort(fobj => fobj.Priority);
             this.fobjs.forEach(fobj => {
                 fobj.Update(elasped);
                 fobj.Draw(this.context);
             });
+        }
+
+        protected ClearCanvas(): void {
+            let w = this.context.canvas.width;
+            let h = this.context.canvas.height;
+            this.context.clearRect(0, 0, w, h);
         }
     }
 
