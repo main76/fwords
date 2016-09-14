@@ -1,16 +1,18 @@
 /// <reference path="../scene/manager.ts" />
 /// <reference path="./event.ts" />
+/// <reference path="./canvas.ts" />
 
 module core {
     export class Application {
+        private keyboard: Keys;
         private scene: scene.Manager;
         private startTime: Date;
         private lastFrame: any;
-        private keyboard: Keys;
 
-        constructor(context: CanvasRenderingContext2D) {
+        constructor(param: HTMLCanvasElement | string) {
             this.keyboard = Keys.CreateInstance(this);
-            this.scene = scene.Manager.CreateInstance(this, context);
+            this.scene = scene.Manager.CreateInstance(this);
+            Canvas.CreateInstance(this, param);
         }
 
         public Start(timeout: number): void {

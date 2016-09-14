@@ -1,3 +1,5 @@
+/// <reference path="../external/fabric.d.ts" />
+
 module fobject {
 
     export class Fobject<T extends IDrawable> implements IDrawable, IDisposable {
@@ -20,9 +22,10 @@ module fobject {
             }
         }
 
-        public Draw(context: CanvasRenderingContext2D): void {
+        public Draw(canvas: fabric.IStaticCanvas): void {
             if (this.instance) {
-                this.instance.Draw(context);
+                canvas.getContext().globalAlpha = 1;
+                this.instance.Draw(canvas);
             }
         }
 
@@ -44,6 +47,11 @@ module fobject {
     export type Point = {
         x: number,
         y: number
+    };
+
+    export type Size = {
+        width: number,
+        height: number
     };
 
     export class Rectangle {
@@ -74,7 +82,7 @@ module fobject {
     }
 
     export interface IDrawable extends IFrameType {
-        Draw(context: CanvasRenderingContext2D): void;
+        Draw(canvas: fabric.IStaticCanvas): void;
     }
 
     export interface IFrameType {

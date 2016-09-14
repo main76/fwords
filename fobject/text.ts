@@ -1,4 +1,5 @@
 /// <reference path="baseobj.ts" />
+/// <reference path="../external/fabric.d.ts" />
 
 module fobject {
     export class TextPainter implements IDrawable {
@@ -14,7 +15,8 @@ module fobject {
             this.Position = { x: 0, y: 0 };
         }
 
-        public Draw(context: CanvasRenderingContext2D): void {
+        public Draw(canvas: fabric.IStaticCanvas): void {
+            let context = canvas.getContext();
             context.font = this.FontStyle;
             context.fillText(this.TextValue, this.Position.x, this.Position.y);
         }

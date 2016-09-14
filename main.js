@@ -1,11 +1,11 @@
-var context;
+var canvas;
 var app;
 
 window.onload = function(event) {
-    context = document.getElementById('cvs').getContext('2d');
+    canvas = document.getElementById('cvs');
     
     // Get class from namespace, and create a instance.
-    app = new core.Application(context);
+    app = new core.Application(canvas);
 
     // Start the application
     app.Start(25);

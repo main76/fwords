@@ -24,24 +24,24 @@ module scene {
             return Manager.instance;
         }
 
-        public static CreateInstance(app: core.Application, ctx: CanvasRenderingContext2D): Manager {
+        public static CreateInstance(app: core.Application): Manager {
             if (!(app instanceof core.Application))
                 throw new Error('Instance can only be created by the application.');
             if (Manager.instance)
                 throw new Error('Instance can only be initialized once');
-            Manager.instance = new Manager(ctx);
+            Manager.instance = new Manager();
             return Manager.instance;
         }
 
-        constructor(ctx: CanvasRenderingContext2D) {
+        constructor() {
             this.scenes = {
                 battle: null,
                 credit: null,
                 loading: null,
                 menu: null
             };
-            this.scenes.loading = new Loading(ctx);
-            this.scenes.menu = new Menu(ctx); // should be aync
+            this.scenes.loading = new Loading();
+            this.scenes.menu = new Menu(); 
             this.Current = this.scenes.loading;
         }
     }

@@ -11,8 +11,8 @@ module scene {
         private selection: fobject.Fobject<fobject.TextPainter>;
         private currentSelect: fobject._Node_;
 
-        constructor(ctx: CanvasRenderingContext2D) {
-            super(ctx);
+        constructor() {
+            super();
 
             this.first = this.CreateText('first', 50, 50);
             this.second = this.CreateText('second', 50, 150);
