@@ -1,7 +1,4 @@
-# Compiled Javascript file
-export/
-
-# nw.js release folder
+# Nw.js release folder
 release/
 
 # Windows image file caches
