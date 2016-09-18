@@ -11,6 +11,6 @@ download and set environment path.
 at root directory, run `nw .`.
 
 ## release 
-if you are using vscode, you can use shortcut: '`shift+alt+b`'.
+if you are using vscode, you can use shortcut: '`ctrl+shift+b`'.
 before doing this, check whether the build option suits your platform, in .vscode/tasks.json.
  
