@@ -24,8 +24,11 @@ module fobject {
 
         public Draw(canvas: fabric.IStaticCanvas): void {
             if (this.instance) {
-                canvas.getContext().globalAlpha = 1;
+                let ctx = canvas.getContext();
+                ctx.save();
+
                 this.instance.Draw(canvas);
+                ctx.restore();
             }
         }
 

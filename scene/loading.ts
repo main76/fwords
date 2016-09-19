@@ -1,20 +1,22 @@
 /// <reference path="basescene.ts" />
 /// <reference path="manager.ts" />
-/// <reference path="../fobject/logo.ts" />
+/// <reference path="../fobject/github.ts" />
 
 module scene {
 
     export class Loading extends BaseScene {
-        private logo: fobject.Fobject<fobject.LogoPainter>;
+        private github: fobject.Fobject<fobject.GitHubPainter>;
         private timer: number;
 
         constructor() {
             super();
-            var painter = new fobject.LogoPainter();
-            painter.Position = { x: 40, y: 40 };
-            painter.Size = { width: 320, height: 320};
-            this.logo = new fobject.Fobject<fobject.LogoPainter>(painter);
-            this.fobjs.push(this.logo);
+
+            var g = new fobject.GitHubPainter();
+            g.Location = { x: 40, y: 40 };
+            g.Scale = { width: 320, height: 320};
+            this.github = new fobject.Fobject<fobject.GitHubPainter>(g);
+            this.fobjs.push(this.github);
+            
             this.timer = 0;
         }
 
